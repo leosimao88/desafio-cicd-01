@@ -24,7 +24,7 @@ jobs:
 
   testes:
     needs: [build]
-    uses: leosimao88/desafio-cicd-01/.github/workflows.testes.yml@main
+    uses: leosimao88/desafio-cicd-01/.github/workflows/testes.yml@main
 
 
   release:
