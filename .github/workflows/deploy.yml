@@ -1,11 +1,20 @@
 name: Deloy no Kubernetes
 on:
     workflow_call:
-
+        inputs:
+          environment-name:
+            type: string
+            required: true
+          environment-url:
+            type: string
+            required: true
 jobs:
     deploy:
         name: "Deploy"
         runs-on: ubuntu-latest
+        environment:
+            name: ${{ inputs.environment-name }}
+            url: ${{ inputs.environment-url }}
         steps:
             - name: Obtendo o código
               uses: actions/checkout@v6
@@ -16,9 +25,14 @@ jobs:
                 method: kubeconfig
                 kubeconfig: ${{ secrets.K8S_CONFIG }}
             
+            - name: Update Deployment
+              run: "sed -i 's/host: homologacao.leosimao88.com/host: ${{ vars.BASE_URL }}/g' k8s/deployment.yaml"
+
+            
             - name: Deploy no Kubernetes
               uses: Azure/k8s-deploy@v5
               with:
+                namespace: ${{ secrets.K8S_NAMESPACE }}
                 manifests: |
                     k8s/deployment.yaml
                 images: |
